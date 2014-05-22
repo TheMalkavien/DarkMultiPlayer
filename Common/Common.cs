@@ -18,6 +18,11 @@ namespace DarkMultiPlayerCommon
         //Program version. This is written in the build scripts.
         public const string PROGRAM_VERSION = "Custom";
 
+        // PLACEHOLDER
+        public const string CLIENT_VERSION = "", SERVER_VERSION = "";
+
+        public const string ADMIN_MARKER = "@";
+
         public static string CalculateSHA256Hash(string fileName)
         {
             return CalculateSHA256Hash(File.ReadAllBytes(fileName));
