@@ -592,7 +592,7 @@ namespace DarkMultiPlayerServer
             {
                 serverAdmins.AddRange(File.ReadAllLines(adminListFile));
             }
-            else 
+            else
             {
                 SaveAdmins();
             }
@@ -2668,10 +2668,17 @@ namespace DarkMultiPlayerServer
 
         public static void AdminCommand(string commandArgs)
         {
-            string[] parts = commandArgs.Split(' ');
+            string func = "";
+            string playerName = "";
 
-            string func = parts[0];
-            string playerName = parts[1];
+            if (commandArgs.Contains(" "))
+            {
+                func = commandArgs.Substring(0, commandArgs.IndexOf(" "));
+                if (commandArgs.Substring(func.Length).Contains(" "))
+                {
+                    playerName = commandArgs.Substring(func.Length + 1);
+                }
+            }
 
             switch (func)
             {
@@ -2679,8 +2686,7 @@ namespace DarkMultiPlayerServer
                     DarkLog.Debug("Undefined function. Usage: /admin [add|del] playername");
                     break;
                 case "add":
-                    ClientObject findPlayer = GetClientByName(playerName);
-                    if (findPlayer != null)
+                    if (File.Exists(Path.Combine(Server.universeDirectory, "Players", playerName + ".txt")))
                     {
                         if (!serverAdmins.Contains(playerName))
                         {
@@ -2696,34 +2702,23 @@ namespace DarkMultiPlayerServer
                     }
                     else
                     {
-                        DarkLog.Debug("'" + playerName + "' is offline or does not exist.");
+                        DarkLog.Debug("'" + playerName + "' does not exist.");
                     }
                     break;
                 case "del":
-                    ClientObject delPlayer = GetClientByName(playerName);
-                    if (delPlayer != null)
+                    if (serverAdmins.Contains(playerName))
                     {
-                        if (serverAdmins.Contains(playerName))
-                        {
-                            DarkLog.Debug("Removed '" + playerName + "' from the admin list.");
-                            serverAdmins.Remove(playerName);
-                            SaveAdmins();
-                        }
-                        else
-                        {
-                            DarkLog.Debug("'" + playerName + "' is not an admin.");
-                        }
-
+                        DarkLog.Debug("Removed '" + playerName + "' from the admin list.");
+                        serverAdmins.Remove(playerName);
+                        SaveAdmins();
                     }
                     else
                     {
-                        DarkLog.Debug("'" + playerName + "' is offline or does not exist.");
+                        DarkLog.Debug("'" + playerName + "' is not an admin.");
                     }
                     break;
-
             }
         }
-
         #endregion
     }
 
